@@ -41,7 +41,7 @@ with open(f'./{dp_name}/pack.mcmeta', 'w') as f:
 {{
     "pack": {{
         "pack_format": 5,
-        "description": "{dp_desc} by {dev_name}"
+        "description": "{dp_name} by {dev_name}"
     }}
 }}
     '''
