@@ -3,6 +3,7 @@ A simple datapack template generator written in Python3
 
 This Python Script require the 'Requests' module to work.
 You can install it using the following command:
+
 `pip install requests`
 
 You simply need to provide a couple of information and it will automatically generate a datapack template that follows the official conventions
