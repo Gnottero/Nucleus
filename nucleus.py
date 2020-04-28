@@ -15,6 +15,9 @@ dp_desc = input('Please insert the description of the datapack: ')
 main_name = input('Please insert the name of the main function: ')
 load_name = input('Please insert the name of the load function: ')
 namespace = dp_name.replace(" ", "_").lower()
+main_name_format = main_name.replace(" ", "_").lower()
+load_name_format = load_name.replace(" ", "_").lower()
+
 
 
 #> Adding default values if the description or the item or the main fun name or the load fun name are not defined <#
@@ -96,9 +99,9 @@ def mc_tags(mc_tags_path,dev_name,namespace):
         f.write(json.dumps(mc_tick, indent=5, sort_keys=True))
 
 
-def dp_tags(dp_tags_path,dev_name,namespace,main_name,load_name):
-    ns_load = {"values": [f"{dev_name.lower()}:{namespace}/{load_name.lower()}"]}
-    ns_loop = {"values": [f"{dev_name.lower()}:{namespace}/{main_name.lower()}"]}
+def dp_tags(dp_tags_path,dev_name,namespace,main_name_format,load_name_format):
+    ns_load = {"values": [f"{dev_name.lower()}:{namespace}/{load_name_format}"]}
+    ns_loop = {"values": [f"{dev_name.lower()}:{namespace}/{main_name_format}"]}
     
     with open(f'{dp_tags_path}/load.json', 'w') as f:
         f.write(json.dumps(ns_load, indent=5, sort_keys=True))
@@ -106,10 +109,10 @@ def dp_tags(dp_tags_path,dev_name,namespace,main_name,load_name):
         f.write(json.dumps(ns_loop, indent=5, sort_keys=True))
 
 
-def dp_fun(dp_fun_path,main_name,load_name):
-    with open(f'{dp_fun_path}/{main_name.lower()}.mcfunction', 'w') as f:
+def dp_fun(dp_fun_path,main_name_format,load_name_format):
+    with open(f'{dp_fun_path}/{main_name_format}.mcfunction', 'w') as f:
         f.write('#> This is the main function, that will run once per tick')
-    with open(f'{dp_fun_path}/{load_name.lower()}.mcfunction', 'w') as f:
+    with open(f'{dp_fun_path}/{load_name_format}.mcfunction', 'w') as f:
         f.write('#> This function will run on datapack loading')
 
 
@@ -119,8 +122,8 @@ gen_pack_mcmeta(dp_name,dev_name)
 global_advancements(g_adv_path,namespace,dev_name,skull_value)
 dp_advancement(dp_adv_path,namespace,dp_name,dp_desc,dp_item)
 mc_tags(mc_tags_path,dev_name,namespace)
-dp_tags(dp_tags_path,dev_name,namespace,main_name,load_name)
-dp_fun(dp_fun_path,main_name,load_name)
+dp_tags(dp_tags_path,dev_name,namespace,main_name_format,load_name_format)
+dp_fun(dp_fun_path,main_name_format,load_name_format)
 
 
 print(
