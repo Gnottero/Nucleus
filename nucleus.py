@@ -56,31 +56,17 @@ mc_tags_path = f"./{dp_name}/data/minecraft/tags/functions"
 dp_tags_path = f"./{dp_name}/data/{dev_name.lower()}/tags/functions/{namespace}"
 dp_fun_path = f"./{dp_name}/data/{dev_name.lower()}/functions/{namespace}"
 
+def try_mkdir(path):
+    try:
+        os.makedirs(path)
+    except FileExistsError:
+        pass
 
-try:
-    os.makedirs(g_adv_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(dp_adv_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(mc_tags_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(dp_tags_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(dp_fun_path)
-except FileExistsError:
-    pass
+try_mkdir(g_adv_path)   
+try_mkdir(dp_adv_path)
+try_mkdir(mc_tags_path)
+try_mkdir(dp_tags_path)
+try_mkdir(dp_fun_path)
 
 
 def gen_pack_mcmeta(dp_name,dev_name):
