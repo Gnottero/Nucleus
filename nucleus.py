@@ -59,9 +59,25 @@ dp_fun_path = f"./{dp_name}/data/{dev_name.lower()}/functions/{namespace}"
 
 try:
     os.makedirs(g_adv_path)
+except FileExistsError:
+    pass
+
+try:
     os.makedirs(dp_adv_path)
+except FileExistsError:
+    pass
+
+try:
     os.makedirs(mc_tags_path)
+except FileExistsError:
+    pass
+
+try:
     os.makedirs(dp_tags_path)
+except FileExistsError:
+    pass
+
+try:
     os.makedirs(dp_fun_path)
 except FileExistsError:
     pass
