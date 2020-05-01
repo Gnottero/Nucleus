@@ -10,17 +10,25 @@ import json
 #> Setupping the variables <#
 dev_name = input('Please insert your name (Minecraft Username): ')
 dp_name = input('Please insert your datapack name: ')
+namespace = input('Please insert the name of the namespace: ').replace(" ", "_").lower()
+project_name = input('Please insert the project name: ').replace(" ", "_").lower()
 dp_item = input('Please insert the id of the item that will be displayed in the advancement: ')
 dp_desc = input('Please insert the description of the datapack: ')
-main_name = input('Please insert the name of the main function: ')
-load_name = input('Please insert the name of the load function: ')
-namespace = dp_name.replace(" ", "_").lower()
-main_name_format = main_name.replace(" ", "_").lower()
-load_name_format = load_name.replace(" ", "_").lower()
-
+main_name = input('Please insert the name of the main function: ').replace(" ", "_").lower()
+load_name = input('Please insert the name of the load function: ').replace(" ", "_").lower()
 
 
 #> Adding default values if the description or the item or the main fun name or the load fun name are not defined <#
+if len(project_name) == 0:
+    project_name= dp_name.replace(" ", "_").lower()
+else:
+    pass
+
+if len(namespace) == 0:
+    namespace= project_name
+else:
+    pass
+
 if len(dp_item) == 0:
     dp_item= 'name_tag'
 else:
@@ -51,36 +59,23 @@ skull_value = skull_value_rq.json()['properties'][0]['value']
 
 #> Generating all the needed folder <#
 g_adv_path = f"./{dp_name}/data/global/advancements"
-dp_adv_path = f"./{dp_name}/data/{dev_name.lower()}/advancements/{namespace}"
+dp_adv_path = f"./{dp_name}/data/{namespace}/advancements/{project_name}"
 mc_tags_path = f"./{dp_name}/data/minecraft/tags/functions"
-dp_tags_path = f"./{dp_name}/data/{dev_name.lower()}/tags/functions/{namespace}"
-dp_fun_path = f"./{dp_name}/data/{dev_name.lower()}/functions/{namespace}"
+dp_tags_path = f"./{dp_name}/data/{namespace}/tags/functions/{project_name}"
+dp_fun_path = f"./{dp_name}/data/{namespace}/functions/{project_name}"
 
 
-try:
-    os.makedirs(g_adv_path)
-except FileExistsError:
-    pass
+def try_mkdir(path):
+    try:
+        os.makedirs(path)
+    except FileExistsError:
+        pass
 
-try:
-    os.makedirs(dp_adv_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(mc_tags_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(dp_tags_path)
-except FileExistsError:
-    pass
-
-try:
-    os.makedirs(dp_fun_path)
-except FileExistsError:
-    pass
+try_mkdir(g_adv_path)   
+try_mkdir(dp_adv_path)
+try_mkdir(mc_tags_path)
+try_mkdir(dp_tags_path)
+try_mkdir(dp_fun_path)
 
 
 def gen_pack_mcmeta(dp_name,dev_name):
@@ -99,15 +94,15 @@ def global_advancements(g_adv_path,namespace,dev_name,skull_value):
         f.write(json.dumps(dev, indent=5, sort_keys=True))
 
 
-def dp_advancement(dp_adv_path,namespace,dp_name,dp_desc,dp_item):
+def dp_advancement(dp_adv_path,project_name,dp_name,dp_desc,dp_item):
     dp_adv = {"display": {"title": f"{dp_name.title()}","description": f"{dp_desc}","icon": {"item": f"minecraft:{dp_item}"},"announce_to_chat": False,"show_toast": False},"parent": f"global:{namespace}","criteria": {"trigger": {"trigger": "minecraft:tick"}}}
-    with open(f'{dp_adv_path}/{namespace}.json', 'w') as f:
+    with open(f'{dp_adv_path}/{project_name}.json', 'w') as f:
         f.write(json.dumps(dp_adv, indent=5, sort_keys=True))
 
 
-def mc_tags(mc_tags_path,dev_name,namespace):
-    mc_load = {"values": [f"#{dev_name.lower()}:{namespace}/load"]}
-    mc_tick = {"values": [f"#{dev_name.lower()}:{namespace}/loop"]}
+def mc_tags(mc_tags_path,namespace,project_name):
+    mc_load = {"values": [f"#{namespace}:{project_name}/load"]}
+    mc_tick = {"values": [f"#{namespace}:{project_name}/loop"]}
     
     with open(f'{mc_tags_path}/load.json', 'w') as f:
         f.write(json.dumps(mc_load, indent=5, sort_keys=True))
@@ -115,9 +110,9 @@ def mc_tags(mc_tags_path,dev_name,namespace):
         f.write(json.dumps(mc_tick, indent=5, sort_keys=True))
 
 
-def dp_tags(dp_tags_path,dev_name,namespace,main_name_format,load_name_format):
-    ns_load = {"values": [f"{dev_name.lower()}:{namespace}/{load_name_format}"]}
-    ns_loop = {"values": [f"{dev_name.lower()}:{namespace}/{main_name_format}"]}
+def dp_tags(dp_tags_path,namespace,main_name,load_name,project_name):
+    ns_load = {"values": [f"{namespace}:{project_name}/{load_name}"]}
+    ns_loop = {"values": [f"{namespace}:{project_name}/{main_name}"]}
     
     with open(f'{dp_tags_path}/load.json', 'w') as f:
         f.write(json.dumps(ns_load, indent=5, sort_keys=True))
@@ -125,10 +120,10 @@ def dp_tags(dp_tags_path,dev_name,namespace,main_name_format,load_name_format):
         f.write(json.dumps(ns_loop, indent=5, sort_keys=True))
 
 
-def dp_fun(dp_fun_path,main_name_format,load_name_format):
-    with open(f'{dp_fun_path}/{main_name_format}.mcfunction', 'w') as f:
+def dp_fun(dp_fun_path,main_name,load_name):
+    with open(f'{dp_fun_path}/{main_name}.mcfunction', 'w') as f:
         f.write('#> This is the main function, that will run once per tick')
-    with open(f'{dp_fun_path}/{load_name_format}.mcfunction', 'w') as f:
+    with open(f'{dp_fun_path}/{load_name}.mcfunction', 'w') as f:
         f.write('#> This function will run on datapack loading')
 
 
@@ -136,10 +131,10 @@ def dp_fun(dp_fun_path,main_name_format,load_name_format):
 #> Calling all the functions <#
 gen_pack_mcmeta(dp_name,dev_name)
 global_advancements(g_adv_path,namespace,dev_name,skull_value)
-dp_advancement(dp_adv_path,namespace,dp_name,dp_desc,dp_item)
-mc_tags(mc_tags_path,dev_name,namespace)
-dp_tags(dp_tags_path,dev_name,namespace,main_name_format,load_name_format)
-dp_fun(dp_fun_path,main_name_format,load_name_format)
+dp_advancement(dp_adv_path,project_name,dp_name,dp_desc,dp_item)
+mc_tags(mc_tags_path,namespace,project_name)
+dp_tags(dp_tags_path,namespace,main_name,load_name,project_name)
+dp_fun(dp_fun_path,main_name,load_name)
 
 
 print(
