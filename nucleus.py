@@ -20,17 +20,17 @@ load_name = input('Please insert the name of the load function: ').replace(" ", 
 
 #> Adding default values if the description or the item or the main fun name or the load fun name are not defined <#
 if len(project_name) == 0:
-    project_name= dp_name.replace(" ", "_").lower()
+    project_name = dp_name.replace(" ", "_").lower()
 else:
     pass
 
 if len(namespace) == 0:
-    namespace= project_name
+    namespace = dev_name.lower()
 else:
     pass
 
 if len(dp_item) == 0:
-    dp_item= 'name_tag'
+    dp_item = 'name_tag'
 else:
     pass
 
@@ -120,11 +120,13 @@ def dp_tags(dp_tags_path,namespace,main_name,load_name,project_name):
         f.write(json.dumps(ns_loop, indent=5, sort_keys=True))
 
 
-def dp_fun(dp_fun_path,main_name,load_name):
+def dp_fun(dp_fun_path,main_name,load_name,dp_name):
     with open(f'{dp_fun_path}/{main_name}.mcfunction', 'w') as f:
         f.write('#> This is the main function, that will run once per tick')
     with open(f'{dp_fun_path}/{load_name}.mcfunction', 'w') as f:
         f.write('#> This function will run on datapack loading')
+    with open(f'{dp_fun_path}/uninstall.mcfunction', 'w') as f:
+        f.write(f'#> This is the uninstall function\n datapack disable "file/{dp_name}"')
 
 
 
@@ -134,7 +136,7 @@ global_advancements(g_adv_path,namespace,dev_name,skull_value)
 dp_advancement(dp_adv_path,project_name,dp_name,dp_desc,dp_item)
 mc_tags(mc_tags_path,namespace,project_name)
 dp_tags(dp_tags_path,namespace,main_name,load_name,project_name)
-dp_fun(dp_fun_path,main_name,load_name)
+dp_fun(dp_fun_path,main_name,load_name,dp_name)
 
 
 print(
