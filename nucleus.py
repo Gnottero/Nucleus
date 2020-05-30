@@ -10,12 +10,13 @@ import json
 #> Setupping the variables <#
 dev_name = input('Please insert your name (Minecraft Username): ')
 dp_name = input('Please insert your datapack name: ')
-namespace = input('Please insert the name of the namespace: ').replace(" ", "_").lower()
-project_name = input('Please insert the project name: ').replace(" ", "_").lower()
-dp_item = input('Please insert the id of the item that will be displayed in the advancement: ')
-dp_desc = input('Please insert the description of the datapack: ')
-main_name = input('Please insert the name of the main function: ').replace(" ", "_").lower()
-load_name = input('Please insert the name of the load function: ').replace(" ", "_").lower()
+namespace = input('(Optional) Please insert the name of the namespace: ').replace(" ", "_").lower()
+project_name = input('(Optional) Please insert the project name: ').replace(" ", "_").lower()
+dp_item = input('(Optional) Please insert the id of the item that will be displayed in the advancement: ')
+dp_desc = input('(Optional) Please insert the description of the datapack: ')
+main_name = input('(Optional) Please insert the name of the main function: ').replace(" ", "_").lower()
+load_name = input('(Optional) Please insert the name of the load function: ').replace(" ", "_").lower()
+dp_path = input('(Optional) Please insert the path where you want to generate the datapack: ')
 
 
 #> Adding default values if the description or the item or the main fun name or the load fun name are not defined <#
@@ -49,6 +50,11 @@ if len(load_name) == 0:
 else:
     pass
 
+if len(dp_path) == 0:
+    dp_path = '.'
+else:
+    pass
+
 #> Requesting player data from the Mojang API <#
 uuid_rq = requests.get(f'https://api.mojang.com/users/profiles/minecraft/{dev_name}')
 player_uuid = uuid_rq.json()['id']
@@ -58,11 +64,11 @@ skull_value = skull_value_rq.json()['properties'][0]['value']
 #> Starting the generation phase <#
 
 #> Generating all the needed folder <#
-g_adv_path = f"./{dp_name}/data/global/advancements"
-dp_adv_path = f"./{dp_name}/data/{namespace}/advancements/{project_name}"
-mc_tags_path = f"./{dp_name}/data/minecraft/tags/functions"
-dp_tags_path = f"./{dp_name}/data/{namespace}/tags/functions/{project_name}"
-dp_fun_path = f"./{dp_name}/data/{namespace}/functions/{project_name}"
+g_adv_path = f"{dp_path}/{dp_name}/data/global/advancements"
+dp_adv_path = f"{dp_path}/{dp_name}/data/{namespace}/advancements/{project_name}"
+mc_tags_path = f"{dp_path}/{dp_name}/data/minecraft/tags/functions"
+dp_tags_path = f"{dp_path}/{dp_name}/data/{namespace}/tags/functions/{project_name}"
+dp_fun_path = f"{dp_path}/{dp_name}/data/{namespace}/functions/{project_name}"
 
 
 def try_mkdir(path):
@@ -78,9 +84,9 @@ try_mkdir(dp_tags_path)
 try_mkdir(dp_fun_path)
 
 
-def gen_pack_mcmeta(dp_name,dev_name):
+def gen_pack_mcmeta(dp_path,dp_name,dev_name):
     pack = {"pack": {"pack_format": 5,"description": f"{dp_name} by {dev_name}"}}
-    with open(f'./{dp_name}/pack.mcmeta', 'w') as f:
+    with open(f'{dp_path}/{dp_name}/pack.mcmeta', 'w') as f:
         f.write(json.dumps(pack, indent=5, sort_keys=True))
 
 
@@ -131,7 +137,7 @@ def dp_fun(dp_fun_path,main_name,load_name,dp_name):
 
 
 #> Calling all the functions <#
-gen_pack_mcmeta(dp_name,dev_name)
+gen_pack_mcmeta(dp_path,dp_name,dev_name)
 global_advancements(g_adv_path,namespace,dev_name,skull_value)
 dp_advancement(dp_adv_path,project_name,dp_name,dp_desc,dp_item)
 mc_tags(mc_tags_path,namespace,project_name)
